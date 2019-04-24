@@ -1,0 +1,262 @@
+<!doctype html>
+
+<html lang="es">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <title>Ludotecas en Santiago de Chile</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+</head>
+
+<body id="top">
+    
+    <nav class="navbar navbar-expand-md fixed-top navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#top">Bienvenidos</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample01" aria-controls="navbarsExample01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExample01">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#map">Mapa</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#detalles">Detalles</a>
+                </li>
+            </ul>
+        </div>
+      </div>
+    </nav>
+
+    <header>
+        <div class="overlay"></div>
+        <video playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop">
+            <source src="juego.mp4" type="video/mp4">
+        </video>
+        <div class="container h-100">
+            <div class="d-flex h-100 text-center align-items-center">
+                <div class="w-100 text-white">
+                    <h1 class="display-3">Ludotecas en Santiago</h1>
+                    <p class="lead mb-0">Salas de juegos de mesa y estrategia para todas las edades</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="map">
+        <div id="mapid" style="width: 100%; height: 70vh;"></div>
+    </section>
+    <section id="detalles" class="bg-light">
+        <div class="container">
+        <div class="row text-center">
+         <div class="col-12 py-3"> 
+                    Selecciona ludotecas según comuna
+                    <select id="selector" onchange="mostrador()">
+                        <option>Todas las comunas</option>
+                        <option>Providencia</option>
+                        <option>Santiago</option>
+                        <option>Peñalolén</option>
+                        <option>Estación Central</option>
+                        <option>Ñuñoa</option>
+                        
+                    </select>  
+            </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <section class="bg-dark">
+        <div class="container">
+            <div class="row py-3">
+                <div class="card-columns" id="ludotecas">
+                    <!--aquí hay un cambio-->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="novedad">
+        <!--aquí coloco la "visualización"-->
+    </section>
+    
+    
+    
+    
+    <footer>
+        <div class="container-fluid" id="foo">
+            <div class="row small py-2 text-light">
+                <div class="col-sm-6 py-3">Seminario de Gráfica Computacional I</div>
+                <div class="col-sm-6 py-3 text-md-right">Javiera Castro © 2019</div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script>
+        $.getJSON("https://api.myjson.com/bins/1dj59k", function(data) {
+            console.log(data);
+            var mymap = L.map('mapid').setView([-33.44, -70.63], 13);
+            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                maxZoom: 20,
+                id: 'mapbox.light' 
+                
+            }).addTo(mymap);
+
+            
+            var marcaNar = L.icon({
+                iconUrl: 'img/pin.png',
+                iconSize: [20, 30]
+                });
+            
+            var marcaAz = L.icon({
+                iconUrl: 'img/pinazul.png',
+                iconSize: [20, 30]
+                });
+            
+            var marcaMor = L.icon({
+                iconUrl: 'img/pinmor.png',
+                iconSize: [20, 30]
+                });
+            
+            var marcaRo = L.icon({
+                iconUrl: 'img/pinrosa.png',
+                iconSize: [20, 30]
+                });
+            
+            var marcaTu = L.icon({
+                iconUrl: 'img/pintur.png',
+                iconSize: [20, 30]
+                });
+            
+                
+            
+            for (var x = 0; x < data.length; x++) {
+              
+                if(data[x].comuna == "Santiago"){
+                L.marker([data[x].ubicacion[0], data[x].ubicacion[1]], {icon: marcaTu}).addTo(mymap).bindPopup(data[x].nombre).closePopup();
+                }                 
+                else if(data[x].comuna == "Providencia"){
+                L.marker([data[x].ubicacion[0], data[x].ubicacion[1]], {icon: marcaNar}).addTo(mymap).bindPopup(data[x].nombre).closePopup();
+                } 
+                
+                else if(data[x].comuna == "Ñuñoa"){
+                L.marker([data[x].ubicacion[0], data[x].ubicacion[1]], {icon: marcaRo}).addTo(mymap).bindPopup(data[x].nombre).closePopup();
+                }                 
+                else if(data[x].comuna == "Peñalolén"){
+                L.marker([data[x].ubicacion[0], data[x].ubicacion[1]], {icon: marcaMor}).addTo(mymap).bindPopup(data[x].nombre).closePopup();
+                } 
+                
+                else {
+                L.marker([data[x].ubicacion[0], data[x].ubicacion[1]], {icon: marcaAz}).addTo(mymap).bindPopup(data[x].nombre).closePopup();
+                }
+                
+                
+                    var segundo =   "<div class=\"card " + data[x].comuna + "\">";
+                        var tercero =   "<img src=\"" + data[x].foto + "\" class=\"card-img-top\">";
+                        var cuarto  =   "<div class=\"card-body\">";
+                            var quinto  =   "<h5 class=\"card-title\">" + data[x].nombre + "</h5>"
+                            var sexto   =   "<h6  class=\"card-text\">" + data[x].comuna + " </h6>" ;
+                            var septimo =   "<p class=\"card-text\">" + data[x].horario + " </p>";
+                        var octavo  =   "</div>";                
+                    var noveno  =   "</div>";
+                var ultimo = "<a href=\"" + data[x].url + "\" target=\"_blank\" class=\"btn btn-secondary btn-sm\">Página web</a>";
+                $("#ludotecas").append(segundo + tercero + cuarto + quinto + sexto + septimo + ultimo +  octavo + noveno);
+            }
+        });
+        
+        
+        $('a[href*="#"]:not([href="#"])').click(function() {
+            if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+              var target = $(this.hash);
+              target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+              if (target.length) {
+                $('html, body').animate({
+                  scrollTop: (target.offset().top - 54)
+                }, 1000);
+                return false;
+              }
+            }
+        });
+        
+      
+    $(document).scroll(function(){
+         if ($(this).scrollTop() > 457) {
+          $('nav').addClass("amarillo");
+         } else {
+          $('nav').removeClass("amarillo");
+         }
+      });
+           
+       function mostrador() {
+            
+            var x = document.getElementById("selector").value;
+            
+            if (x.includes("Providencia")) {
+                $(".Providencia").show();
+                $(".Santiago, .Peñalolén, .Estación Central, .Ñuñoa").hide()
+            } else if (x.includes("Santiago")) {
+                $(".Santiago").show()
+                $(".Providencia, .Peñalolén, .Estación Central, .Ñuñoa").hide()
+            } else if (x.includes("Peñalolén")) {
+                $(".Peñalolén").show();
+                $(".Providencia, .Santiago, .Estación Central, .Ñuñoa").hide()
+            } else if (x.includes("Estación Central")) {
+                $("Estación Central").show();
+                $(".Providencia, .Santiago, .Peñalolén, .Ñuñoa").hide()
+            } else if (x.includes("Ñuñoa")) {
+                $(".Ñuñoa").show();
+                $(".Providencia, .Santiago, .Peñalolén, .Estación Central").hide()
+            } else {
+                $(".Providencia, .Santiago, .Peñalolén, .Estación Central, .Ñuñoa").show()
+            }
+        }   
+        
+        
+    </script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.min.js"></script>   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.min.js"></script>
+   
+    <script>
+        
+var global;
+
+function preload(){
+  global = loadJSON("https://api.myjson.com/bins/1d57vk");
+}
+
+function setup() {
+  createCanvas(windowWidth, 400).parent("novedad");
+  var local = global.com;
+  noStroke();
+  fill (255, 255, 255);
+  textAlign(CENTER);
+  textSize(17);
+  textFont('Roboto');
+  rectMode(CENTER);
+  text('Cantidad de ludotecas por comuna', width/2, 100);
+  for(var x = 0; x < 5; x++){
+  ellipse((width/6)*(x+1), height/2, local[x].ludotecas*15, local[x].ludotecas*15);
+  text(local[x].comuna, (width / 6) * (x + 1), (height/2)+150,50,50);
+
+  }
+}
+        
+        
+    </script>
+    
+    
+</body>
+
+</html>
